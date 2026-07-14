@@ -46,12 +46,13 @@
     --overlay-bg: #f6f4ef;
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; touch-action: manipulation; }
 
   html, body {
     margin: 0;
     min-height: 100vh;
     background: var(--bg);
+    overflow: hidden;
   }
 
   body {
@@ -61,7 +62,6 @@
     justify-content: center;
     align-items: flex-start;
     transition: background 0.5s ease, color 0.5s ease;
-    touch-action: manipulation;
   }
 
   .app-shell {
@@ -133,6 +133,7 @@
     position: relative;
     cursor: pointer;
     overflow: hidden;
+    user-select: none;
   }
   .avatar span {
     font-family: 'Playfair Display', serif;
@@ -323,6 +324,31 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
+
+  /* ---------- Avatar upload ---------- */
+  .avatar-edit-zone {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: none;
+  }
+  .avatar-edit-zone:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .avatar-upload-hint {
+    font-size: 11px;
+    color: var(--text);
+    text-align: center;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body data-theme="black">
@@ -339,8 +365,8 @@
       <div class="avatar" id="avatarWrap">
         <span id="avatarLetter">F</span>
         <img id="avatarImg" alt="Foto de perfil">
-        <div class="avatar-edit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div class="avatar-edit-zone" id="avatarEditZone">
+          <div class="avatar-upload-hint">Tap para cambiar</div>
         </div>
         <input type="file" id="avatarInput" accept="image/*" hidden>
       </div>
@@ -420,6 +446,39 @@
     localStorage.setItem('appTheme', next);
   }
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+  // Avatar upload handler
+  const avatarEditZone = document.getElementById('avatarEditZone');
+  const avatarInput = document.getElementById('avatarInput');
+  const avatarImg = document.getElementById('avatarImg');
+  const avatarLetter = document.getElementById('avatarLetter');
+  
+  avatarEditZone.addEventListener('click', () => {
+    avatarInput.click();
+  });
+  
+  avatarInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imageData = reader.result;
+      avatarImg.src = imageData;
+      avatarImg.style.display = 'block';
+      avatarLetter.style.display = 'none';
+      localStorage.setItem('avatarImage', imageData);
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  // Load avatar from localStorage on page load
+  const savedAvatar = localStorage.getItem('avatarImage');
+  if (savedAvatar) {
+    avatarImg.src = savedAvatar;
+    avatarImg.style.display = 'block';
+    avatarLetter.style.display = 'none';
+  }
 
   document.getElementById('scrollBtn').addEventListener('click', () => {
     document.getElementById('cardGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
