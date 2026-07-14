@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bienvenido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --roadmap-glow: #2f6bff;
+    --fitness-glow: #e0102f;
+  }
+
+  [data-theme="black"] {
+    --bg: #060606;
+    --surface: #0d0d0d;
+    --card: #141414;
+    --card-2: #17181a;
+    --text: #f3f2ee;
+    --muted: #97968f;
+    --hair: rgba(255,255,255,0.10);
+    --badge-bg: #d8d6cf;
+    --badge-fg: #1a1a1a;
+    --pill-bg: #f3f2ee;
+    --pill-fg: #111;
+    --finance-glow: #22e07a;
+    --grain-op: 0.05;
+    --overlay-bg: #000000;
+  }
+
+  [data-theme="white"] {
+    --bg: #f6f4ef;
+    --surface: #efece4;
+    --card: #e8e4d9;
+    --card-2: #e2ded2;
+    --text: #16160f;
+    --muted: #6b6a62;
+    --hair: rgba(0,0,0,0.10);
+    --badge-bg: #16160f;
+    --badge-fg: #f6f4ef;
+    --pill-bg: #16160f;
+    --pill-fg: #f6f4ef;
+    --finance-glow: #0b6e2f;
+    --grain-op: 0.035;
+    --overlay-bg: #f6f4ef;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 460px;
+    min-height: 100vh;
+    background: var(--surface);
+    position: relative;
+    padding: 22px 22px 100px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .app-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: var(--grain-op);
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* ---------- Barra superior ---------- */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 3;
+  }
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .icon-btn:hover { opacity: 1; transform: scale(1.08); }
+  .icon-btn svg { width: 21px; height: 21px; }
+
+  /* ---------- Perfil ---------- */
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 6px;
+    z-index: 3;
+  }
+
+  .avatar {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    background: radial-gradient(circle at 35% 30%, #c9c6bb, #8d8b81 45%, #45443e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 10px 26px rgba(0,0,0,0.45);
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .avatar span {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    color: rgba(20,20,20,0.55);
+    font-style: italic;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .avatar-edit {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--pill-bg);
+    color: var(--pill-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .avatar-edit svg { width: 14px; height: 14px; }
+
+  .name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .name-row h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 32px;
+    margin: 0;
+  }
+  .badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--badge-bg);
+    color: var(--badge-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .badge svg { width: 11px; height: 11px; }
+
+  .handle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+    letter-spacing: 0.2px;
+  }
+  .tagline {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .tagline b { color: var(--text); font-weight: 600; }
+
+  .pill-btn {
+    margin-top: 20px;
+    background: var(--pill-bg);
+    color: var(--pill-fg);
+    border: none;
+    border-radius: 40px;
+    padding: 12px 30px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .pill-btn:hover { transform: translateY(-2px); opacity: 0.92; }
+
+  /* ---------- Cuadrícula de tarjetas ---------- */
+  .grid {
+    margin-top: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 3;
+  }
+  .row { display: flex; gap: 14px; }
+  .row .card { flex: 1; }
+
+  .card {
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(150deg, var(--card), var(--card-2));
+    border: 1px solid var(--hair);
+    cursor: pointer;
+    height: 168px;
+    display: flex;
+    align-items: flex-end;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card.featured { height: 190px; }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  .card .watermark {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 78px;
+    height: 78px;
+    opacity: 0.16;
+    color: var(--text);
+  }
+  .card.featured .watermark { width: 96px; height: 96px; }
+  .card .watermark svg { width: 100%; height: 100%; }
+
+  .card .info {
+    position: relative;
+    z-index: 2;
+    padding: 16px 18px;
+  }
+  .card .info .title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .card .info .subtitle {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .card:hover, .card:active { transform: translateY(-4px); }
+
+  .card.roadmap:hover, .card.roadmap:active {
+    box-shadow: 0 16px 42px rgba(47,107,255,0.35), inset 0 0 0 1px rgba(47,107,255,0.55);
+  }
+  .card.roadmap:hover .watermark, .card.roadmap:active .watermark { color: var(--roadmap-glow); opacity: 0.9; }
+  .card.roadmap:hover .title, .card.roadmap:active .title { color: var(--roadmap-glow); }
+
+  .card.finance:hover, .card.finance:active {
+    box-shadow: 0 16px 42px rgba(34,224,122,0.3), inset 0 0 0 1px var(--finance-glow);
+  }
+  .card.finance:hover .watermark, .card.finance:active .watermark { color: var(--finance-glow); opacity: 0.9; }
+  .card.finance:hover .title, .card.finance:active .title { color: var(--finance-glow); }
+
+  .card.fitness:hover, .card.fitness:active {
+    box-shadow: 0 16px 42px rgba(224,16,47,0.32), inset 0 0 0 1px rgba(224,16,47,0.6);
+  }
+  .card.fitness:hover .watermark, .card.fitness:active .watermark { color: var(--fitness-glow); opacity: 0.9; }
+  .card.fitness:hover .title, .card.fitness:active .title { color: var(--fitness-glow); }
+
+  /* ---------- Pantalla de carga ---------- */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-bg);
+    transition: opacity 0.6s ease, background 0.4s ease;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+  .loading-overlay.active { opacity: 1; pointer-events: all; }
+  .loading-icon {
+    width: 90px;
+    height: 90px;
+    animation: spin 1.1s linear infinite;
+    filter: drop-shadow(0 0 18px currentColor);
+  }
+  .loading-icon svg { width: 100%; height: 100%; }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body data-theme="black">
+
+  <div class="app-shell">
+
+    <div class="top-bar">
+      <button class="icon-btn" id="themeToggle" aria-label="Cambiar tema"></button>
+    </div>
+
+    <div class="profile">
+      <div class="avatar" id="avatarWrap">
+        <span id="avatarLetter">F</span>
+        <img id="avatarImg" alt="Foto de perfil">
+        <div class="avatar-edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+      </div>
+      <div class="name-row">
+        <h1>Felipe</h1>
+        <span class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>
+        </span>
+      </div>
+      <div class="handle">Bienvenido de nuevo</div>
+      <div class="tagline"><b>Panel personal</b> · progreso &amp; metas</div>
+      <button class="pill-btn" id="scrollBtn">Ver todo</button>
+    </div>
+
+    <div class="grid" id="cardGrid">
+      <div class="card featured roadmap" data-name="roadmap" data-href="roadmap.html">
+        <div class="watermark">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,50 22,34 32,42 50,18"></polyline>
+            <polyline points="38,18 50,18 50,30"></polyline>
+          </svg>
+        </div>
+        <div class="info">
+          <div class="title">Roadmap</div>
+          <div class="subtitle">Ver progreso general</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card finance" data-name="finance" data-href="finance.html">
+          <div class="watermark">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5">
+              <circle cx="32" cy="32" r="27"></circle>
+              <text x="32" y="42" text-anchor="middle" font-size="30" font-weight="700" fill="currentColor" font-family="Inter, Arial, sans-serif" stroke="none">&#8383;</text>
+            </svg>
+          </div>
+          <div class="info">
+            <div class="title">Finance</div>
+            <div class="subtitle">Seguimiento financiero</div>
+          </div>
+        </div>
+
+        <div class="card fitness" data-name="fitness" data-href="fitness.html">
+          <div class="watermark">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5">
+              <circle cx="32" cy="32" r="27"></circle>
+              <circle cx="32" cy="32" r="18"></circle>
+              <circle cx="32" cy="32" r="5"></circle>
+              <circle cx="32" cy="16" r="4"></circle>
+              <circle cx="20" cy="40" r="4"></circle>
+              <circle cx="44" cy="40" r="4"></circle>
+            </svg>
+          </div>
+          <div class="info">
+            <div class="title">Fitness</div>
+            <div class="subtitle">Rutina y metas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom-nav">
+    <button aria-label="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></button>
+    <button aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+    <button aria-label="Comparar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="16" rx="1.5"/><rect x="13" y="4" width="7" height="16" rx="1.5"/></svg></button>
+    <button class="theme-switch" id="themeToggleBottom" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></button>
+    <button aria-label="Perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></button>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-icon" id="loadingIcon"></div>
+  </div>
+
+<script>
+  const body = document.body;
+  const savedTheme = localStorage.getItem('appTheme') || 'black';
+  body.setAttribute('data-theme', savedTheme);
+
+  function toggleTheme() {
+    const current = body.getAttribute('data-theme');
+    const next = current === 'black' ? 'white' : 'black';
+    body.setAttribute('data-theme', next);
+    localStorage.setItem('appTheme', next);
+  }
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('themeToggleBottom').addEventListener('click', toggleTheme);
+
+  document.getElementById('scrollBtn').addEventListener('click', () => {
+    document.getElementById('cardGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  const glowColors = {
+    roadmap: () => '#2f6bff',
+    fitness: () => '#e0102f',
+    finance: () => body.getAttribute('data-theme') === 'white' ? '#0b6e2f' : '#22e07a'
+  };
+
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingIcon = document.getElementById('loadingIcon');
+  const cards = document.querySelectorAll('.card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.dataset.name;
+      const iconMarkup = card.querySelector('.watermark').innerHTML;
+      loadingIcon.innerHTML = iconMarkup;
+      loadingIcon.style.color = glowColors[name] ? glowColors[name]() : '#ffffff';
+      overlay.classList.add('active');
+
+      const destino = card.dataset.href;
+      // Cuando conectes las páginas reales, descomenta para redirigir:
+      // setTimeout(() => { window.location.href = destino; }, 1200);
+
+      setTimeout(() => {
+        overlay.classList.remove('active');
+      }, 2200);
+    });
+  });
+</script>
+</body>
+</html>
