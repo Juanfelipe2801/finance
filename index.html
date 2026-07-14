@@ -320,6 +320,15 @@
   }
   .loading-icon svg { width: 100%; height: 100%; }
 
+  .app-shell.fade-out {
+    animation: fadeOut 0.6s ease forwards;
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -378,7 +387,6 @@
       </div>
       <div class="handle">Bienvenido de nuevo</div>
       <div class="tagline"><b>Panel personal</b> · progreso &amp; metas</div>
-      <button class="pill-btn" id="scrollBtn">Ver todo</button>
     </div>
 
     <div class="grid" id="cardGrid">
@@ -480,10 +488,6 @@
     avatarLetter.style.display = 'none';
   }
 
-  document.getElementById('scrollBtn').addEventListener('click', () => {
-    document.getElementById('cardGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-
   const glowColors = {
     roadmap: () => '#2f6bff',
     fitness: () => '#e0102f',
@@ -492,6 +496,7 @@
 
   const overlay = document.getElementById('loadingOverlay');
   const loadingIcon = document.getElementById('loadingIcon');
+  const appShell = document.querySelector('.app-shell');
   const cards = document.querySelectorAll('.card');
 
   cards.forEach(card => {
@@ -501,14 +506,10 @@
       loadingIcon.innerHTML = iconMarkup;
       loadingIcon.style.color = glowColors[name] ? glowColors[name]() : '#ffffff';
       overlay.classList.add('active');
+      appShell.classList.add('fade-out');
 
       const destino = card.dataset.href;
-      // Cuando conectes las páginas reales, descomenta para redirigir:
-      setTimeout(() => { window.location.href = destino; }, 1200);
-
-      setTimeout(() => {
-        overlay.classList.remove('active');
-      }, 2200);
+      setTimeout(() => { window.location.href = destino; }, 600);
     });
   });
 </script>
